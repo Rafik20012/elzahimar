@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind-Link - Support for Alzheimer's Patients</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+            background: #b3e5fc; /* Baby Blue background */
+            color: #0a1929; /* Dark text for contrast */
+        }
+        
+        /* Alzheimer's Animation Background */
+        .animation-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%); /* Baby Blue gradient */
+        }
+        
+        .memory-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            animation: pulseMemory 8s infinite ease-in-out;
+        }
+        
+        .memory-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+            box-shadow: 0 0 40px rgba(2, 119, 189, 0.2);
+        }
+        
+        .memory-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 1s;
+            box-shadow: 0 0 30px rgba(2, 119, 189, 0.2);
+        }
+        
+        .memory-circle:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 2s;
+            box-shadow: 0 0 35px rgba(2, 119, 189, 0.2);
+        }
+        
+        .memory-node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: rgba(2, 119, 189, 0.6);
+            border-radius: 50%;
+            animation: fadeInOut 4s infinite ease-in-out;
+        }
+        
+        .memory-node:nth-child(4) {
+            top: 25%;
+            left: 25%;
+            animation-delay: 0.5s;
+        }
+        
+        .memory-node:nth-child(5) {
+            top: 40%;
+            right: 30%;
+            animation-delay: 1.2s;
+        }
+        
+        .memory-node:nth-child(6) {
+            bottom: 30%;
+            left: 35%;
+            animation-delay: 2.4s;
+        }
+        
+        .memory-node:nth-child(7) {
+            top: 55%;
+            right: 40%;
+            animation-delay: 0.8s;
+        }
+        
+        .memory-node:nth-child(8) {
+            bottom: 45%;
+            right: 25%;
+            animation-delay: 3s;
+        }
+        
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(2, 119, 189, 0.5), transparent);
+            transform-origin: left center;
+            animation: connect 6s infinite ease-in-out;
+        }
+        
+        .connection-line:nth-child(9) {
+            top: 27%;
+            left: 27%;
+            width: 100px;
+            animation-delay: 0.2s;
+        }
+        
+        .connection-line:nth-child(10) {
+            top: 42%;
+            right: 32%;
+            width: 80px;
+            animation-delay: 1.5s;
+        }
+        
+        .connection-line:nth-child(11) {
+            bottom: 32%;
+            left: 37%;
+            width: 120px;
+            animation-delay: 2.8s;
+        }
+        
+        .forgetful-moment {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: fadeAway 5s infinite ease-in-out;
+        }
+        
+        .forgetful-moment:nth-child(12) {
+            top: 30%;
+            right: 20%;
+            animation-delay: 1s;
+        }
+        
+        .forgetful-moment:nth-child(13) {
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 3s;
+        }
+        
+        .forgetful-moment:nth-child(14) {
+            top: 50%;
+            left: 40%;
+            animation-delay: 2s;
+        }
+        
+        .brain-silhouette {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            opacity: 0.1;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,15 C30,15 15,30 15,50 C15,70 30,85 50,85 C70,85 85,70 85,50 C85,30 70,15 50,15 Z" fill="none" stroke="%230277bd" stroke-width="2"/><path d="M35,40 C25,45 25,55 35,60" fill="none" stroke="%230277bd" stroke-width="1.5"/><path d="M65,40 C75,45 75,55 65,60" fill="none" stroke="%230277bd" stroke-width="1.5"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        
+        .header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: slideDown 1s ease;
+            z-index: 10;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.5s ease;
+            flex-direction: row;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0277bd;
+            margin-left: 10px;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.3);
+            order: 2;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: #0277bd;
+            animation: pulse 2s infinite, rotate 10s infinite linear;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.3);
+            order: 1;
+        }
+        
+        /* Welcome Page Styles */
+        #welcomePage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            animation: fadeIn 1s ease;
+            margin-top: 80px;
+        }
+        
+        .welcome-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(2, 119, 189, 0.2);
+            backdrop-filter: blur(10px);
+            color: #0a1929;
+        }
+        
+        .welcome-title {
+            color: #0277bd;
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.2);
+        }
+        
+        .welcome-subtitle {
+            color: #0288d1;
+            font-size: 18px;
+            margin-bottom: 40px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .welcome-illustration {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, rgba(2, 119, 189, 0.2) 0%, rgba(3, 155, 229, 0.2) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: gentlePulse 5s infinite ease-in-out;
+            box-shadow: 0 0 30px rgba(2, 119, 189, 0.2);
+            overflow: hidden;
+            border: 2px solid rgba(2, 119, 189, 0.2);
+        }
+        
+        .welcome-illustration i {
+            font-size: 90px;
+            color: #0277bd;
+            animation: pulse 3s infinite ease-in-out;
+            text-shadow: 0 0 15px rgba(2, 119, 189, 0.2);
+        }
+        
+        .choice-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .choice-btn {
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-btn {
+            background: linear-gradient(to right, #0277bd, #03a9f4);
+            color: white;
+        }
+        
+        .signup-btn {
+            background: transparent;
+            color: #0277bd;
+            border: 2px solid #0277bd;
+        }
+        
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: 0.5s;
+            z-index: 1;
+        }
+        
+        .choice-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(2, 119, 189, 0.3);
+        }
+        
+        .choice-btn:hover::before {
+            left: 100%;
+        }
+        
+        .choice-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Alzheimer's Animation Keyframes */
+        @keyframes pulseMemory {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.3; transform: scale(1); }
+        }
+        
+        @keyframes connect {
+            0% { opacity: 0; transform: scaleX(0); }
+            50% { opacity: 0.7; transform: scaleX(1); }
+            100% { opacity: 0; transform: scaleX(0); }
+        }
+        
+        @keyframes fadeAway {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+        
+        @keyframes gentlePulse {
+            0% { box-shadow: 0 0 30px rgba(2, 119, 189, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(2, 119, 189, 0.3); }
+           100% { box-shadow: 0 0 30px rgba(2, 119, 189, 0.2); }
+        }
+        
+        /* Other Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 500px) {
+            .welcome-container {
+                padding: 25px 20px;
+            }
+            
+            .welcome-title {
+                font-size: 28px;
+            }
+            
+            .welcome-subtitle {
+                font-size: 16px;
+            }
+            
+            .logo-text {
+                font-size: 20px;
+            }
+            
+            .welcome-illustration {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .welcome-illustration i {
+                font-size: 70px;
+            }
+            
+            .memory-circle {
+                display: none;
+            }
+            
+            .choice-buttons {
+                gap: 15px;
+            }
+            
+            .choice-btn {
+                padding: 14px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Alzheimer's Animation Background -->
+    <div class="animation-background">
+        <div class="memory-circle"></div>
+        <div class="memory-circle"></div>
+        <div class="memory-circle"></div>
+        
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        
+        <div class="connection-line"></div>
+        <div class="connection-line"></div>
+        <div class="connection-line"></div>
+        
+        <div class="forgetful-moment"></div>
+        <div class="forgetful-moment"></div>
+        <div class="forgetful-moment"></div>
+        
+        <div class="brain-silhouette"></div>
+    </div>
+    
+    <header class="header">
+        <a href="#" class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span class="logo-text">Mind-Link</span>
+        </a>
+    </header>
+    
+    <!-- Welcome Page -->
+    <div id="welcomePage">
+        <div class="welcome-container">
+            <h1 class="welcome-title">Welcome to Mind-Link</h1>
+            <p class="welcome-subtitle">Supporting Alzheimer's patients and their families with care and connection</p>
+            
+            <div class="welcome-illustration">
+                <i class="fas fa-brain"></i>
+            </div>
+            
+            <div class="choice-buttons">
+                <a href="login.html" class="choice-btn login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="signup.html" class="choice-btn signup-btn">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add hover effects to interactive elements
+        const interactiveElements = document.querySelectorAll('input, button, a');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                el.style.transform = 'translateY(-2px)';
+                el.style.transition = 'transform 0.3s ease';
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind-Link - Records</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+            background: #e6f7ff;
+            color: #0a1929;
+        }
+        
+        /* Animation Background */
+        .animation-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+        }
+        
+        .memory-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            animation: pulseMemory 8s infinite ease-in-out;
+        }
+        
+        .memory-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+            box-shadow: 0 0 40px rgba(2, 119, 189, 0.2);
+        }
+        
+        .memory-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 1s;
+            box-shadow: 0 0 30px rgba(2, 119, 189, 0.2);
+        }
+        
+        .memory-circle:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 2s;
+            box-shadow: 0 0 35px rgba(2, 119, 189, 0.2);
+        }
+        
+        .memory-node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: rgba(2, 119, 189, 0.6);
+            border-radius: 50%;
+            animation: fadeInOut 4s infinite ease-in-out;
+        }
+        
+        .memory-node:nth-child(4) {
+            top: 25%;
+            left: 25%;
+            animation-delay: 0.5s;
+        }
+        
+        .memory-node:nth-child(5) {
+            top: 40%;
+            right: 30%;
+            animation-delay: 1.2s;
+        }
+        
+        .memory-node:nth-child(6) {
+            bottom: 30%;
+            left: 35%;
+            animation-delay: 2.4s;
+        }
+        
+        .memory-node:nth-child(7) {
+            top: 55%;
+            right: 40%;
+            animation-delay: 0.8s;
+        }
+        
+        .memory-node:nth-child(8) {
+            bottom: 45%;
+            right: 25%;
+            animation-delay: 3s;
+        }
+        
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(2, 119, 189, 0.5), transparent);
+            transform-origin: left center;
+            animation: connect 6s infinite ease-in-out;
+        }
+        
+        .connection-line:nth-child(9) {
+            top: 27%;
+            left: 27%;
+            width: 100px;
+            animation-delay: 0.2s;
+        }
+        
+        .connection-line:nth-child(10) {
+            top: 42%;
+            right: 32%;
+            width: 80px;
+            animation-delay: 1.5s;
+        }
+        
+        .connection-line:nth-child(11) {
+            bottom: 32%;
+            left: 37%;
+            width: 120px;
+            animation-delay: 2.8s;
+        }
+        
+        .forgetful-moment {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: fadeAway 5s infinite ease-in-out;
+        }
+        
+        .forgetful-moment:nth-child(12) {
+            top: 30%;
+            right: 20%;
+            animation-delay: 1s;
+        }
+        
+        .forgetful-moment:nth-child(13) {
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 3s;
+        }
+        
+        .forgetful-moment:nth-child(14) {
+            top: 50%;
+            left: 40%;
+            animation-delay: 2s;
+        }
+        
+        .brain-silhouette {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            opacity: 0.1;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,15 C30,15 15,30 15,50 C15,70 30,85 50,85 C70,85 85,70 85,50 C85,30 70,15 50,15 Z" fill="none" stroke="%230277bd" stroke-width="2"/><path d="M35,40 C25,45 25,55 35,60" fill="none" stroke="%230277bd" stroke-width="1.5"/><path d="M65,40 C75,45 75,55 65,60" fill="none" stroke="%230277bd" stroke-width="1.5"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        
+        .header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            animation: slideDown 1s ease;
+            z-index: 10;
+            background: rgba(179, 229, 252, 0.9);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.5s ease;
+            flex-direction: row;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0277bd;
+            margin-left: 10px;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.3);
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: #0277bd;
+            animation: pulse 2s infinite, rotate 10s infinite linear;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.3);
+        }
+        
+        /* Back button */
+        .back-btn {
+            position: absolute;
+            top: 90px;
+            left: 30px;
+            background: rgba(2, 119, 189, 0.2);
+            border: none;
+            color: #0277bd;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-btn:hover {
+            background: rgba(2, 119, 189, 0.4);
+            transform: translateX(-5px);
+        }
+        
+        /* Records Page Styles */
+        #recordsPage {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            animation: fadeIn 1s ease;
+            margin-top: 80px;
+        }
+        
+        .page-title {
+            color: #0277bd;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-align: center;
+            text-shadow: 极 0 10px rgba(2, 119, 189, 0.2);
+        }
+        
+        .page-subtitle {
+            color: #0288d1;
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+        
+        .records-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 极.1);
+            width: 100%;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(2, 119, 189, 0.2);
+            backdrop-filter: blur(10px);
+            color: #0a1929;
+        }
+        
+        .records-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(2, 119, 189, 0.2);
+        }
+        
+        .records-title {
+            color: #0277bd;
+            font-size: 28px;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.2);
+        }
+        
+        .records-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-top: 20px;
+        }
+        
+        .record-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 248, 255, 0.9) 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 2px solid rgba(2, 119, 189, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .record-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(2, 119, 189, 0.2);
+        }
+        
+        .record-icon {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: gentlePulse 5s infinite ease-in-out;
+            box-shadow: 0 0 25px rgba(2, 119, 189, 0.2);
+            overflow: hidden;
+            border: 3px solid rgba(2, 119, 189, 0.2);
+            transition: all 0.4s ease;
+            background: linear-gradient(135deg, rgba(2, 119, 189, 0.2) 0%, rgba(3, 169, 244, 0.2) 100%);
+        }
+        
+        .record-card:hover .record-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 30px rgba(2, 119, 189, 0.3);
+        }
+        
+        .record-icon i {
+            font-size: 45px;
+            color: #0277bd;
+            animation: pulse 3s infinite ease-in-out;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.2);
+        }
+        
+        .record-title {
+            color: #0277bd;
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .record-player {
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: #f0f8ff;
+            padding: 15px;
+        }
+        
+        .custom-player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .player-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #0277bd;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(2, 119, 189, 0.3);
+        }
+        
+        .play-btn:hover {
+            background: #0288d1;
+            transform: scale(1.05);
+        }
+        
+        .play-btn i {
+            font-size: 20px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #e1f5fe;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #0277bd, #03a9f4);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .timer {
+            font-size: 14px;
+            color: #0288d1;
+            font-weight: 500;
+        }
+        
+        .record-desc {
+            color: #0288d1;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        /* Floating elements */
+        .floating-heart {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(2, 119, 189, 0.3);
+            animation: float 6s infinite ease-in-out;
+        }
+        
+        .floating-heart:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-heart:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+        
+        .floating-heart:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        
+        .floating-star {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(2, 119, 189, 0.3);
+            animation: float 5s infinite ease-in-out;
+        }
+        
+        .floating-star:nth-child(4) {
+            top: 30%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+        
+        .floating-star:nth-child(5) {
+            bottom: 30%;
+            right: 25%;
+            animation-delay: 3s;
+        }
+        
+        /* Alzheimer's Animation Keyframes */
+        @keyframes pulseMemory {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+           100% { opacity: 0.3; transform: scale(1); }
+        }
+        
+        @keyframes connect {
+            0% { opacity: 极; transform: scaleX(0); }
+            50% { opacity: 0.7; transform: scaleX(1); }
+            100% { opacity: 0; transform: scaleX(0); }
+        }
+        
+        @keyframes fadeAway {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+        
+        @keyframes gentlePulse {
+            0% { box-shadow: 0 0 30px rgba(2, 119, 189, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(2, 119, 189, 0.3); }
+           100% { box-shadow: 0 0 30px rgba(2, 119, 189, 0.2); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        /* Other Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+           100% { transform: scale(1); }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 900px) {
+            .records-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .page-title {
+                font-size: 28px;
+            }
+            
+            .page-subtitle {
+                font-size: 16px;
+            }
+            
+            .logo-text {
+                font-size: 20px;
+            }
+            
+            .memory-circle {
+                display: none;
+            }
+            
+            .records-header {
+                text-align: center;
+            }
+            
+            .back-btn {
+                top: 80px;
+                left: 20px;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .record-title {
+                font-size: 22px;
+            }
+            
+            .record-icon {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .record-icon i {
+                font-size: 35px;
+            }
+            
+            .record-desc {
+                font-size: 14px;
+            }
+            
+            .play-btn {
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animation Background -->
+    <div class="animation-background">
+        <div class="memory-circle"></div>
+        <div class="memory-circle"></div>
+        <div class="memory-circle"></div>
+        
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        
+        <div class="connection-line"></div>
+        <div class="connection-line"></div>
+        <div class="connection-line"></div>
+        
+        <div class="forgetful-moment"></div>
+        <div class="forgetful-moment"></div>
+        <div class="forgetful-moment"></div>
+        
+        <div class="brain-silhouette"></div>
+        
+        <!-- Floating elements -->
+        <i class="fas fa-heart floating-heart"></i>
+        <i class="fas fa-heart floating-heart"></i>
+        <i class="fas fa-heart floating-heart"></i>
+        <i class="fas fa-star floating-star"></i>
+        <i class="fas fa-star floating-star"></i>
+    </div>
+    
+    <header class="header">
+        <a href="dashboard.html" class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span class="logo-text">Mind Link</span>
+        </a>
+    </header>
+    
+    <!-- Records Page -->
+    <div id="recordsPage">
+        <button class="back-btn" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        
+        <h1 class="page-title">Encouraging Records</h1>
+        <p class="page-subtitle">Listen to these short motivational messages for daily inspiration</p>
+        
+        <div class="records-container">
+            <div class="records-header">
+                <h2 class="records-title">Daily Encouragement</h2>
+            </div>
+            
+            <div class="records-grid">
+                <div class="record-card">
+                    <div class="record-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="record-title">You Are Loved</h3>
+                    <div class="record-player">
+                        <div class="custom-player">
+                            <div class="player-controls">
+                                <button class="play-btn" id="playBtn1">
+                                    <i class="fas fa-play" id="playIcon1"></i>
+                                </button>
+                                <span class="timer" id="timer1">0:00 / 0:10</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar" id="progressBar1"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="record-desc">A short reminder that you are loved and valued by your family and friends.</p>
+                </div>
+                
+                <div class="record-card">
+                    <div class="record-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="record-title">Today Is A Gift</h3>
+                    <div class="record-player">
+                        <div class="custom-player">
+                            <div class="player-controls">
+                                <button class="play-btn" id="playBtn2">
+                                    <i class="fas fa-play" id="playIcon2"></i>
+                                </button>
+                                <span class="timer" id="timer2">0:00 / 0:10</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar" id="progressBar2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="record-desc">A positive message about embracing today and finding joy in small moments.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            window.location.href = "dashboard.html";
+        }
+        
+        // Add hover effects to interactive elements
+        const interactiveElements = document.querySelectorAll('.record-card');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                el.style.transform = 'translateY(-5px)';
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // Add animation delay to each record card for sequential appearance
+        document.querySelectorAll('.record-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.style.animation = 'fadeIn 0.5s ease forwards';
+        });
+        
+        // Audio simulation with Web Speech API
+        const playBtn1 = document.getElementById('playBtn1');
+        const playIcon1 = document.getElementById('playIcon1');
+        const progressBar1 = document.getElementById('progressBar1');
+        const timer1 = document.getElementById('timer1');
+        
+        const playBtn2 = document.getElementById('playBtn2');
+        const playIcon2 = document.getElementById('playIcon2');
+        const progressBar2 = document.getElementById('progressBar2');
+        const timer2 = document.getElementById('timer2');
+        
+        let isPlaying1 = false;
+        let isPlaying2 = false;
+        let progress1 = 0;
+        let progress2 = 0;
+        let interval1, interval2;
+        
+        // First record functionality
+        playBtn1.addEventListener('click', function() {
+            if (!isPlaying1) {
+                // Start playing
+                isPlaying1 = true;
+                playIcon1.classList.remove('fa-play');
+                playIcon1.classList.add('fa-pause');
+                
+                // Use text-to-speech as a fallback
+                const speech = new SpeechSynthesisUtterance();
+                speech.text = "You are loved. Your family cares for you deeply. Remember that you are valued and important.";
+                speech.rate = 0.9;
+                speech.pitch = 1.1;
+                
+                // Simulate audio playback with progress bar
+                let time = 0;
+                const duration = 10; // 10 seconds
+                
+                interval1 = setInterval(() => {
+                    time++;
+                    progress1 = (time / duration) * 100;
+                    progressBar1.style.width = progress1 + '%';
+                    timer1.textContent = `0:${time.toString().padStart(2, '0')} / 0:10`;
+                    
+                    if (time >= duration) {
+                        clearInterval(interval1);
+                        isPlaying1 = false;
+                        playIcon1.classList.remove('fa-pause');
+                        playIcon1.classList.add('fa-play');
+                        progressBar1.style.width = '0%';
+                        timer1.textContent = '0:00 / 0:10';
+                    }
+                }, 1000);
+                
+                // Try to use the Web Speech API
+                try {
+                    window.speechSynthesis.speak(speech);
+                    
+                    // Stop speech after 10 seconds
+                    setTimeout(() => {
+                        window.speechSynthesis.cancel();
+                    }, 10000);
+                } catch (e) {
+                    console.log("Text-to-speech not supported:", e);
+                }
+            } else {
+                // Stop playing
+                isPlaying1 = false;
+                playIcon1.classList.remove('fa-pause');
+                playIcon1.classList.add('fa-play');
+                clearInterval(interval1);
+                window.speechSynthesis.cancel();
+            }
+        });
+        
+        // Second record functionality
+        playBtn2.addEventListener('click', function() {
+            if (!isPlaying2) {
+                // Start playing
+                isPlaying2 = true;
+                playIcon2.classList.remove('fa-play');
+                playIcon2.classList.add('fa-pause');
+                
+                // Use text-to-speech as a fallback
+                const speech = new SpeechSynthesisUtterance();
+                speech.text = "Today is a gift. Embrace each moment. Find joy in small things and cherish your memories.";
+                speech.rate = 0.9;
+                speech.pitch = 1.1;
+                
+                // Simulate audio playback with progress bar
+                let time = 0;
+                const duration = 10; // 10 seconds
+                
+                interval2 = setInterval(() => {
+                    time++;
+                    progress2 = (time / duration) * 100;
+                    progressBar2.style.width = progress2 + '%';
+                    timer2.textContent = `0:${time.toString().padStart(2, '0')} / 0:10`;
+                    
+                    if (time >= duration) {
+                        clearInterval(interval2);
+                        isPlaying2 = false;
+                        playIcon2.classList.remove('fa-pause');
+                        playIcon2.classList.add('fa-play');
+                        progressBar2.style.width = '0%';
+                        timer2.textContent = '0:00 / 0:10';
+                    }
+                }, 1000);
+                
+                // Try to use the Web Speech API
+                try {
+                    window.speechSynthesis.speak(speech);
+                    
+                    // Stop speech after 10 seconds
+                    setTimeout(() => {
+                        window.speechSynthesis.cancel();
+                    }, 10000);
+                } catch (e) {
+                    console.log("Text-to-speech not supported:", e);
+                }
+            } else {
+                // Stop playing
+                isPlaying2 = false;
+                playIcon2.classList.remove('fa-pause');
+                playIcon2.classList.add('fa-play');
+                clearInterval(interval2);
+                window.speechSynthesis.cancel();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind-Link - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+            background: #e6f7ff;
+            color: #0a1929;
+        }
+        
+        /* Animation Background */
+        .animation-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+        }
+        
+        .memory-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            animation: pulseMemory 8s infinite ease-in-out;
+        }
+        
+        .memory-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+            box-shadow: 0 0 40px rgba(2, 119, 189, 0.2);
+        }
+        
+        .memory-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 1s;
+            box-shadow: 0 0 30px rgba(2, 119, 189, 0.2);
+        }
+        
+        .memory-circle:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 2s;
+            box-shadow: 0 0 35px rgba(2, 119, 189, 0.2);
+        }
+        
+        .memory-node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: rgba(2, 119, 189, 0.6);
+            border-radius: 50%;
+            animation: fadeInOut 4s infinite ease-in-out;
+        }
+        
+        .memory-node:nth-child(4) {
+            top: 25%;
+            left: 25%;
+            animation-delay: 0.5s;
+        }
+        
+        .memory-node:nth-child(5) {
+            top: 40%;
+            right: 30%;
+            animation-delay: 1.2s;
+        }
+        
+        .memory-node:nth-child(6) {
+            bottom: 30%;
+            left: 35%;
+            animation-delay: 2.4s;
+        }
+        
+        .memory-node:nth-child(7) {
+            top: 55%;
+            right: 40%;
+            animation-delay: 0.8s;
+        }
+        
+        .memory-node:nth-child(8) {
+            bottom: 45%;
+            right: 25%;
+            animation-delay: 3s;
+        }
+        
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(2, 119, 189, 0.5), transparent);
+            transform-origin: left center;
+            animation: connect 6s infinite ease-in-out;
+        }
+        
+        .connection-line:nth-child(9) {
+            top: 27%;
+            left: 27%;
+            width: 100px;
+            animation-delay: 0.2s;
+        }
+        
+        .connection-line:nth-child(10) {
+            top: 42%;
+            right: 32%;
+            width: 80px;
+            animation-delay: 1.5s;
+        }
+        
+        .connection-line:nth-child(11) {
+            bottom: 32%;
+            left: 37%;
+            width: 120px;
+            animation-delay: 2.8s;
+        }
+        
+        .forgetful-moment {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: fadeAway 5s infinite ease-in-out;
+        }
+        
+        .forgetful-moment:nth-child(12) {
+            top: 30%;
+            right: 20%;
+            animation-delay: 1s;
+        }
+        
+        .forgetful-moment:nth-child(13) {
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 3s;
+        }
+        
+        .forgetful-moment:nth-child(14) {
+            top: 50%;
+            left: 40%;
+            animation-delay: 2s;
+        }
+        
+        .brain-silhouette {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            opacity: 0.1;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,15 C30,15 15,30 15,50 C15,70 30,85 50,85 C70,85 85,70 85,50 C85,30 70,15 50,15 Z" fill="none" stroke="%230277bd" stroke-width="2"/><path d="M35,40 C25,45 25,55 35,60" fill="none" stroke="%230277bd" stroke-width="1.5"/><path d="M65,40 C75,45 75,55 65,60" fill="none" stroke="%230277bd" stroke-width="1.5"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        
+        .header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            animation: slideDown 1s ease;
+            z-index: 10;
+            background: rgba(179, 229, 252, 0.9);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.5s ease;
+            flex-direction: row;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0277bd;
+            margin-left: 10px;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.3);
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: #0277bd;
+            animation: pulse 2s infinite, rotate 10s infinite linear;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.3);
+        }
+        
+    
+        
+        /* Dashboard Page Styles */
+        #dashboardPage {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            animation: fadeIn 1s ease;
+            margin-top: 80px;
+        }
+        
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .welcome-title {
+            color: #0277bd;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.2);
+        }
+        
+        .welcome-subtitle {
+            color: #0288d1;
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(2, 119, 189, 0.2);
+            backdrop-filter: blur(10px);
+            color: #0a1929;
+        }
+        
+        .dashboard-title {
+            color: #0277bd;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.2);
+        }
+        
+        .dashboard-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, #0277bd, #03a9f4);
+            border-radius: 2px;
+            animation: linePulse 2s infinite;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 248, 255, 0.9) 100%);
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 2px solid rgba(2, 119, 189, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #0277bd, #03a9f4);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(2, 119, 189, 0.2);
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, rgba(2, 119, 189, 0.2) 0%, rgba(3, 169, 244, 0.2) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: gentlePulse 5s infinite ease-in-out;
+            box-shadow: 0 0 25px rgba(2, 119, 189, 0.2);
+            overflow: hidden;
+            border: 2px solid rgba(2, 119, 189, 0.2);
+            transition: all 0.4s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 30px rgba(2, 119, 189, 0.3);
+        }
+        
+        .feature-icon i {
+            font-size: 40px;
+            color: #0277bd;
+            animation: pulse 3s infinite ease-in-out;
+            text-shadow: 0 0 10px rgba(2, 119, 189, 0.2);
+        }
+        
+        .feature-title {
+            color: #0277bd;
+            font-size: 22px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-title {
+            color: #0288d1;
+        }
+        
+        .feature-desc {
+            color: #0288d1;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        /* Back button */
+        .back-btn {
+            position: absolute;
+            top: 90px;
+            left: 30px;
+            background: rgba(2, 119, 189, 0.2);
+            border: none;
+            color: #0277bd;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-btn:hover {
+            background: rgba(2, 119, 189, 0.4);
+            transform: translateX(-5px);
+        }
+        
+        .back-btn:hover::after {
+            content: 'Back to Home';
+            position: absolute;
+            left: 60px;
+            background: rgba(2, 119, 189, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        /* Alzheimer's Animation Keyframes */
+        @keyframes pulseMemory {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+           100% { opacity: 0.3; transform: scale(1); }
+        }
+        
+        @keyframes connect {
+            0% { opacity: 0; transform: scaleX(0); }
+            50% { opacity: 0.7; transform: scaleX(1); }
+            100% { opacity: 0; transform: scaleX(0); }
+        }
+        
+        @keyframes fadeAway {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+        
+        @keyframes gentlePulse {
+            0% { box-shadow: 0 0 30px rgba(2, 119, 189, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(2, 119, 189, 0.3); }
+           100% { box-shadow: 0 0 30px rgba(2, 119, 189, 0.2); }
+        }
+        
+        /* Other Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes linePulse {
+            0% { width: 60px; }
+            50% { width: 100px; }
+            100% { width: 60px; }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+            
+            .feature-card {
+                padding: 20px 15px;
+            }
+            
+            .feature-icon {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .feature-icon i {
+                font-size: 35px;
+            }
+            
+            .feature-title {
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .welcome-title {
+                font-size: 28px;
+            }
+            
+            .welcome-subtitle {
+                font-size: 16px;
+            }
+            
+            .logo-text {
+                font-size: 20px;
+            }
+            
+            .memory-circle {
+                display: none;
+            }
+            
+            .back-btn {
+                top: 80px;
+                left: 20px;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .back-btn:hover::after {
+                left: 45px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animation Background -->
+    <div class="animation-background">
+        <div class="memory-circle"></div>
+        <div class="memory-circle"></div>
+        <div class="memory-circle"></div>
+        
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        <div class="memory-node"></div>
+        
+        <div class="connection-line"></div>
+        <div class="connection-line"></div>
+        <div class="connection-line"></div>
+        
+        <div class="forgetful-moment"></div>
+        <div class="forgetful-moment"></div>
+        <div class="forgetful-moment"></div>
+        
+        <div class="brain-silhouette"></div>
+    </div>
+    
+    <header class="header">
+        <a href="index.html" class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span class="logo-text">Mind Link</span>
+        </a>
+        
+       
+    </header>
+    
+    <!-- Dashboard Page -->
+    <div id="dashboardPage">
+        <button class="back-btn" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome to Your Dashboard</h1>
+            <p class="welcome-subtitle">Explore tools and resources designed to support Alzheimer's patients and their families</p>
+        </div>
+        
+        <div class="dashboard-container">
+            <h2 class="dashboard-title">Mind-Link Features</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card" onclick="window.location.href='family.html'">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="feature-title">My Family</h3>
+                    <p class="feature-desc">Connect with family members and share memories together</p>
+                </div>
+                
+                <div class="feature-card" onclick="window.location.href='Videos.html'">
+                    <div class="feature-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3 class="feature-title">My Videos</h3>
+                    <p class="feature-desc">Watch personalized memory videos and reminiscence therapy</p>
+                </div>
+                
+                <div class="feature-card" onclick="window.location.href='Puzzle.html'">
+                    <div class="feature-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <h3 class="feature-title">My Puzzle</h3>
+                    <p class="feature-desc">Engage in cognitive exercises and brain training games</p>
+                </div>
+                
+               <div class="feature-card" onclick="window.location.href='Records.html'">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <h3 class="feature-title">Records</h3>
+                    <p class="feature-desc">Access medical records and track health progress</p>
+                </div>
+                
+               <div class="feature-card" onclick="window.location.href='Quotes.html'">
+                    <div class="feature-icon">
+                        <i class="fas fa-quote-right"></i>
+                    </div>
+                    <h3 class="feature-title">Quotes</h3>
+                    <p class="feature-desc">Find daily inspiration and motivational quotes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation function
+        function navigateTo(feature) {
+            // Show loading animation
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.style.opacity = '0.7';
+                card.style.pointerEvents = 'none';
+            });
+            
+            // In a real application, this would redirect to the specific feature page
+            // For this example, we'll just show an alert
+            setTimeout(() => {
+                alert(`Navigating to ${feature} page...\nIn a real application, this would open the ${feature} section.`);
+                
+                // Reset cards
+                featureCards.forEach(card => {
+                    card.style.opacity = '1';
+                    card.style.pointerEvents = 'auto';
+                });
+            }, 1000);
+        }
+        
+        // Back function
+        function goBack() {
+            window.location.href = "index.html";
+        }
+        
+        // Add hover effects to interactive elements
+        const interactiveElements = document.querySelectorAll('.feature-card');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                el.style.transform = 'translateY(-10px)';
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // Add animation delay to each feature card for sequential appearance
+        document.querySelectorAll('.feature-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.style.animation = 'fadeIn 0.5s ease forwards';
+        });
+    </script>
+</body>
+</html>
